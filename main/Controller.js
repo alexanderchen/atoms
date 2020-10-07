@@ -5,9 +5,7 @@ function Controller() {
 	this.arrShape = [];
 	
 	// Current data source
-	this.arrData = LINE_DATA_HELIUM;
-	// how many total shapes do I haave
-	this.totalShapes = this.arrData.length;
+	this.arrData;// = arrLineData;
 
 	this.init();
   
@@ -30,18 +28,28 @@ Controller.prototype.init = function() {
 
 	var shape, url;
 	
-	for (var i = 0; i < this.arrData.length; i++) {
-		// Create shape and add it to the array
-		shape = new Shape(this, i);
-		this.arrShape.push(shape);
-		shape.init();
-	}	
+	// Current data source
+	this.arrData = arrLineData;
+
+	
+	this.createShapes();
 	
 	// Tremolo (frequency in Hz, depth) effect
 	var tremolo = new Tone.Tremolo(3, 0.3).toMaster().start();
 	// Creaate synth
 	this.synth = new Tone.PolySynth().connect(tremolo);
-	//this.synth.triggerAttack("C1");
+}
+
+Controller.prototype.createShapes = function() {
+	
+	this.totalShapes = this.arrData.length;	
+	
+	for (var i = 0; i < this.arrData.length; i++) {
+		// Create shape and add it to the array
+		shape = new Shape(this, i);
+		this.arrShape.push(shape);
+		shape.init();
+	}
 }
 
 Controller.prototype.update = function() {
@@ -63,6 +71,18 @@ Controller.prototype.draw = function() {
 		shape.update();
 		shape.render();	
 	}
+}
+
+// Refresh the lines when you load a new element
+Controller.prototype.refreshLines = function() {
+	
+	// Create new shape array
+	this.arrShape = new Array();
+	
+	// point to the new data
+	arrLineData = LINE_DATA[element][1];
+	this.arrData = arrLineData;
+	this.createShapes();
 }
 
 // Triggered whenever the window is resized

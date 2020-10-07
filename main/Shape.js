@@ -55,7 +55,6 @@ Shape.prototype.init = function() {
 
 // Update this shape
 Shape.prototype.update = function() {
-	
 
 	this.x = (LEFT_MARGIN_RATIO * w) + this.positionRatio * (w * (1 - (LEFT_MARGIN_RATIO + RIGHT_MARGIN_RATIO)));
 	this.y = h * TOP_MARGIN_RATIO;
@@ -73,6 +72,10 @@ Shape.prototype.update = function() {
 	this.ease = this.mode == MODE_ATTACK ? this.easeAttack : this.easeRelease;
 	// Ease the current width back to the base
 	// if it's close enough, set it
+	if (this.index == 0) {
+		console.log("updating shape : " + this.mode + ", " + this.width + ", " + this.widthTarget);
+	}
+	
 	if (Math.abs(this.width - this.widthTarget) < 1) {
 		this.width = this.widthTarget;
 		// are we eaasing back to idle state
@@ -82,16 +85,17 @@ Shape.prototype.update = function() {
 	} else {
 		// ease back
 		this.width = this.width + (this.widthTarget - this.width) * this.ease;
+		if (this.index == 0) console.log("setting width : " + this.width);
 	}
 
 	// add visual oscillation effect
 	if (this.mode == MODE_ATTACK) {
 		// add oscillation amount
-		this.oscillationCounter +=- this.oscillationSpeed;
+		this.oscillationCounter += this.oscillationSpeed;
 		var add = Math.sin(this.oscillationCounter) * (this.widthBase * this.oscillationRatio); 
+		console.log("oscillation speed : " + this.oscillationSpeed);
 		this.width += add;
 	}
-		
 	
 	this.height = (1 - TOP_MARGIN_RATIO - BOTTOM_MARGIN_RATIO) * h;
 }
