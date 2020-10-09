@@ -26,6 +26,9 @@ var element = 0;
 // how many total elements are there
 var elementTotal = LINE_DATA.length;
 
+// Current mouse position as a ratio 0 to 1 of the window
+var mousePos;
+
 // Temporary, this is just minimum max values for normalizing the first values in the data array
 var LINE_POSITION_MIN = 0;
 var LINE_POSITION_MAX = 400;
@@ -39,12 +42,14 @@ function setup() {
 
 function draw() {
 	background(0, 0, 0);
+	// Mouse position
+	mousePos = mouseX / w;
 	// Draw all the lines
 	controller.update();
 	controller.draw();
 	// Write the name of the element in the lower left
 	fill(255);
-	textSize(16);
+	textSize(30);
 	textStyle(BOLD);
 	var margin = 20;
 	var elementName = toTitleCase(LINE_DATA[element][0]);
@@ -80,7 +85,6 @@ function keyPressed() {
 		
 	// else Go through the key code array and see if this was a valid key to play lines
 	} else {
-		var frequency, velocity;
 	
 		// Go through the key code array and see if this was a valid key
 		for (var i = 0; i < KEY_CODES.length; i++) {
@@ -89,13 +93,9 @@ function keyPressed() {
 			
 				// double check audio context has been initiated	
 				startAudio();			
-				this.controller.arrShape[i].noteDown();
-				// What frequency should it play at
-				frequency = arrLineData[i][5];
-				// What velocity should it play at
-				velocity = arrLineData[i][4];
-				// trigger attack - note, time, velocity
-				controller.synth.triggerAttack(frequency, Tone.now(), velocity);
+				// set byKey to true so it knows it's being triggered a keyboard event
+				this.controller.arrShape[i].noteDown(true);
+
 			}
 		}
 	}
@@ -112,18 +112,15 @@ function keyReleased() {
 		
 	// else Go through the key code array and see if this was a valid key to play lines
 	} else {
-		
-		var frequency;		
-	
+			
 		for (var i = 0; i < KEY_CODES.length; i++) {
 			// Is it within the range of the number of lines we have?
 			if ((keyCode == KEY_CODES[i]) && (i <= (arrLineData.length - 1))) {
 			
 				// double check audio context has been initiated	
 				startAudio();
-				this.controller.arrShape[i].noteUp();
-				frequency = arrLineData[i][5];
-				controller.synth.triggerRelease(frequency);			
+				// set byKey to true so it knows it's being triggered a keyboard event				
+				this.controller.arrShape[i].noteUp(true);
 			}
 		}
 	}	

@@ -17,10 +17,21 @@ Controller.prototype.init = function() {
 	this.arrData = arrLineData;
 	// Create the shapes
 	this.createShapes();
-	// Tremolo (frequency in Hz, depth) effect
-	var tremolo = new Tone.Tremolo(3, 0.3).toMaster().start();
+	// Tremolo (frequency in Hz, depth) effect helps make the frequencies more pleasant
+	// to listen to so that they're not full volume all the time.
+	var tremolo = new Tone.Tremolo(
+		2, // frequency (Hz)
+		0.4 // depth
+	).toMaster().start();
+	// stereo spread -  set to 0 to make it mono. 
+	tremolo.spread = 0;
 	// Creaate synth
-	this.synth = new Tone.PolySynth().connect(tremolo);
+	this.synth = new Tone.PolySynth(10, Tone.Synth, {
+		oscillator : {
+			// type of waveform - e.g. sine, square, triangle, sawtooth
+			type: "triangle" 
+		}
+	}).connect(tremolo);
 }
 
 Controller.prototype.createShapes = function() {
@@ -58,9 +69,10 @@ Controller.prototype.draw = function() {
 // Refresh the lines when you load a new element
 Controller.prototype.refreshLines = function() {
 	
+	// Force all notes to stop
+	this.stopAllNotes();
 	// Create new shape array
 	this.arrShape = new Array();
-	
 	// point to the new data
 	arrLineData = LINE_DATA[element][1];
 	this.arrData = arrLineData;
@@ -74,6 +86,13 @@ Controller.prototype.windowResized = function() {
 		shape = this.arrShape[i];
 		shape.windowResized();
 	}	
+}
+
+// Release all the notes of the shaapes
+Controller.prototype.stopAllNotes = function() {
+	for (i = 0; i < this.arrShape.length; i++) {
+		this.arrShape[i].forceStop();
+	}
 }
 
 // Key down controls
