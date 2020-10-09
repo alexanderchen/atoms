@@ -3,25 +3,10 @@ function Controller() {
 	
 	// Array of my Shape objects
 	this.arrShape = [];
-	
 	// Current data source
-	this.arrData;// = arrLineData;
-
+	this.arrData;
+	// initialize
 	this.init();
-  
-	/*
-	// Caption settings
-	this.isCaptionFading = false;
-	this.wantToFadeCaption = false;
-	this.captionOpacity = 1.0;
-	this.captionOpacityFadeSpeed = 0.06;
-	
-	// How many recorded layers do we currently have
-	this.layers = 0;
-	
-	// What state am I in - default to recording off
-	this.state = RECORDING_OFF;
-	*/
 }
 
 Controller.prototype.init = function() {
@@ -30,10 +15,8 @@ Controller.prototype.init = function() {
 	
 	// Current data source
 	this.arrData = arrLineData;
-
-	
+	// Create the shapes
 	this.createShapes();
-	
 	// Tremolo (frequency in Hz, depth) effect
 	var tremolo = new Tone.Tremolo(3, 0.3).toMaster().start();
 	// Creaate synth
@@ -42,8 +25,9 @@ Controller.prototype.init = function() {
 
 Controller.prototype.createShapes = function() {
 	
+	// Set how many total shapes we have
 	this.totalShapes = this.arrData.length;	
-	
+	// Create the shapes
 	for (var i = 0; i < this.arrData.length; i++) {
 		// Create shape and add it to the array
 		shape = new Shape(this, i);
@@ -59,14 +43,12 @@ Controller.prototype.update = function() {
 Controller.prototype.draw = function() {
 
 	var i, c;
-
 	// Fill the background black
 	blendMode(NORMAL); noStroke(); fill(0); rect(0, 0, width, height);
 	
 	var shape;
 	// Update all the shapes
 	for (i = 0; i < this.arrShape.length; i++) {
-		
 		shape = this.arrShape[i];
 		shape.update();
 		shape.render();	

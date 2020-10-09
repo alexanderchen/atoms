@@ -80,7 +80,7 @@ function keyPressed() {
 		
 	// else Go through the key code array and see if this was a valid key to play lines
 	} else {
-		var frequency;
+		var frequency, velocity;
 	
 		// Go through the key code array and see if this was a valid key
 		for (var i = 0; i < KEY_CODES.length; i++) {
@@ -90,8 +90,12 @@ function keyPressed() {
 				// double check audio context has been initiated	
 				startAudio();			
 				this.controller.arrShape[i].noteDown();
+				// What frequency should it play at
 				frequency = arrLineData[i][5];
-				controller.synth.triggerAttack(frequency);
+				// What velocity should it play at
+				velocity = arrLineData[i][4];
+				// trigger attack - note, time, velocity
+				controller.synth.triggerAttack(frequency, Tone.now(), velocity);
 			}
 		}
 	}

@@ -11,9 +11,9 @@ function Shape(controllerPm, indexPm) {
 	// my position as a ratio along the spectrum
 	this.positionRatio = (this.controller.arrData[this.index][0] - LINE_POSITION_MIN) / (LINE_POSITION_MAX - LINE_POSITION_MIN);
 	// How thick to set the lines, as a ratio of the window size
-	this.widthBaseRatio = 0.006;
+	this.widthBaseRatio = 0.002;
 	// minimum width in pixels - so lines always stay visible
-	this.minWidth = 3;
+	this.minWidth = 2;
 	// Easing after being triggered. Ratio 0 to 1. Close it is to 1, the faster it'll snap back.
 	this.easeAttack = 0.6;
 	this.easeRelease = 0.08;
@@ -23,11 +23,13 @@ function Shape(controllerPm, indexPm) {
 	this.widthTarget;
 	// How much to expand my width when I'm hit (multiplier of original width);
 	this.ratioExpanded = 3.0;
+	// My opacity
+	this.opacity = this.controller.arrData[this.index][4];
 	// base RGB color
 	this.colorBase = color(
-		this.controller.arrData[this.index][1] * 255,
-		this.controller.arrData[this.index][2] * 255,
-		this.controller.arrData[this.index][3] * 255
+		this.controller.arrData[this.index][1] * 255 * this.opacity,
+		this.controller.arrData[this.index][2] * 255 * this.opacity,
+		this.controller.arrData[this.index][3] * 255 * this.opacity
 	);
 	// how much the stripe should oscillate when held, as an additive amount based on base width
 	// e.g. 0.1 means it'll vibrate/oscillate 10% of base width amount when held.
@@ -72,10 +74,6 @@ Shape.prototype.update = function() {
 	this.ease = this.mode == MODE_ATTACK ? this.easeAttack : this.easeRelease;
 	// Ease the current width back to the base
 	// if it's close enough, set it
-	if (this.index == 0) {
-		console.log("updating shape : " + this.mode + ", " + this.width + ", " + this.widthTarget);
-	}
-	
 	if (Math.abs(this.width - this.widthTarget) < 1) {
 		this.width = this.widthTarget;
 		// are we eaasing back to idle state
@@ -85,7 +83,6 @@ Shape.prototype.update = function() {
 	} else {
 		// ease back
 		this.width = this.width + (this.widthTarget - this.width) * this.ease;
-		if (this.index == 0) console.log("setting width : " + this.width);
 	}
 
 	// add visual oscillation effect
@@ -93,7 +90,6 @@ Shape.prototype.update = function() {
 		// add oscillation amount
 		this.oscillationCounter += this.oscillationSpeed;
 		var add = Math.sin(this.oscillationCounter) * (this.widthBase * this.oscillationRatio); 
-		console.log("oscillation speed : " + this.oscillationSpeed);
 		this.width += add;
 	}
 	
