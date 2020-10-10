@@ -1,3 +1,14 @@
+// NOTE TO SELF - 10/10/2020 -
+// I should redo the overall logic that tries to rweconcile conflicts between 
+// note triggers by a keyboard vs mouse input. Overall better approach should be:
+// set mode constants - e.g. BY_MOUSE, BY_KEYS, BY_MIDI, BY_POSE
+// Then it should simply be:
+// when you activaate note on, store whaat mode triggered the noteon
+// if a note is already on, don't replay it
+// for note off events, simply check if that note off request is being invoked by the same current
+// mode that the shape is stored with. if it's not, ignore that note off event.
+// that way, if you e.g. hover over a note with mouse, it will only be stopped if you hover out with mouse, and so on.
+
 // set constants to define wht mode this shape is in.
 // Note these don't correlate to the synthesizer attack/sustain/release values.
 // These are animation-based states, for the shape to ease to a larger size, be held, then released.
@@ -25,7 +36,7 @@ function Shape(controllerPm, indexPm) {
 	// What target width am I currently trying to get to
 	this.widthTarget;
 	// How much to expand my width when I'm hit (multiplier of original width);
-	this.ratioExpanded = 3.0;
+	this.ratioExpanded = 2.3;
 	// My opacity
 	this.opacity = this.controller.arrData[this.index][4];
 	// base RGB color
@@ -38,7 +49,7 @@ function Shape(controllerPm, indexPm) {
 	// how much the stripe should oscillate when held, as an additive amount based on base width
 	// e.g. 0.1 means it'll vibrate/oscillate 10% of base width amount when held.
 	// increase it to make the oscillataion amount more obvious. Set to 0 if you want none.
-	this.oscillationRatio = 0.11;
+	this.oscillationRatio = 0.15;
 	// oscillation speed. Set the range here. Increase to make it oscillate faaster.
 	// Set the min/max range so the lower lines will vibrate slightly slower than the higher ones.
 	this.oscillationSpeedMax = 0.9;
